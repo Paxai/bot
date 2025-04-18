@@ -1,22 +1,13 @@
 {
-  "name": "whitelist-discord-bot",
+  "name": "discord-member-api",
   "version": "1.0.0",
-  "description": "Discord bot for whitelist application system",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js"
+    "start": "node index.js"
   },
   "dependencies": {
-    "discord.js": "^14.14.1",
-    "express": "^4.18.2",
-    "body-parser": "^1.20.2",
-    "dotenv": "^16.3.1"
-  },
-  "devDependencies": {
-    "nodemon": "^3.0.1"
-  },
-  "engines": {
-    "node": ">=16.9.0"
+    "discord.js": "^14.0.0",
+    "dotenv": "^16.0.0",
+    "express": "^4.18.2"
   }
 }
