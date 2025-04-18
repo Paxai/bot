@@ -19,10 +19,34 @@ const client = new Client({
 const app = express();
 app.use(express.json());
 
+// Dodaj obsługę CORS dla twojej strony
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', 'http://site32954.web1.titanaxe.com');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    
+    // Handle preflight requests
+    if (req.method === 'OPTIONS') {
+        return res.sendStatus(200);
+    }
+    next();
+});
+
+// Endpoint zdrowia do sprawdzania czy bot jest online
+app.get('/health', (req, res) => {
+    res.status(200).send({
+        status: 'online',
+        botLoggedIn: !!client.user,
+        timestamp: new Date().toISOString()
+    });
+});
+
 app.post('/send-embed', async (req, res) => {
+    console.log('Otrzymano żądanie /send-embed:', req.body);
     const { user_id, username, reason, timestamp, attempt } = req.body;
 
     if (!user_id || !username || !reason) {
+        console.error('Brakujące dane w żądaniu:', req.body);
         return res.status(400).send('Brakuje danych.');
     }
 
@@ -40,6 +64,7 @@ app.post('/send-embed', async (req, res) => {
     try {
         const channel = await client.channels.fetch(CHANNEL_ID);
         await channel.send({ embeds: [embed] });
+        console.log('✅ Embed wysłany pomyślnie do kanału Discord');
         res.sendStatus(200);
     } catch (err) {
         console.error('❌ Błąd wysyłania embeda:', err);
@@ -77,6 +102,11 @@ app.post('/send-notification', async (req, res) => {
 
 client.once('ready', () => {
     console.log(`✅ Bot zalogowany jako ${client.user.tag}`);
+    client.user.setPresence({
+        activities: [{ name: 'czekam na zgłoszenia WL 👀' }],
+        status: 'online'
+    });
+
     app.listen(PORT, () => {
         console.log(`📡 Serwer nasłuchuje na porcie ${PORT}`);
     });
